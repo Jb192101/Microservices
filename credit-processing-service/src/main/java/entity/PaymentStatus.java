@@ -1,0 +1,8 @@
+package entity;
+
+public enum PaymentStatus {
+    PENDING,
+    PAID,
+    OVERDUE,
+    CANCELLED
+}

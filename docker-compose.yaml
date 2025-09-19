@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  client-processing:
+    build:
+      context: .
+      dockerfile: Dockerfile-client
+    container_name: client-processing
+    ports:
+      - "8081:8081"
+    networks:
+      - bank-network
+    restart: unless-stopped
+
+  account-processing:
+    build:
+      context: .
+      dockerfile: Dockerfile-account
+    container_name: account-processing
+    ports:
+      - "8082:8082"
+    networks:
+      - bank-network
+    restart: unless-stopped
+
+  credit-processing:
+    build:
+      context: .
+      dockerfile: Dockerfile-credit
+    container_name: credit-processing
+    ports:
+      - "8083:8083"
+    networks:
+      - bank-network
+    restart: unless-stopped
+
+networks:
+  bank-network:
+    driver: bridge

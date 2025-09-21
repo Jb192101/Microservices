@@ -1,14 +1,14 @@
 package entity;
 
-public enum ProductStatus {
+public enum ClientProductStatus {
     ACTIVE("Активный"),
     CLOSED("Закрытый"),
     BLOCKED("Заблокированный"),
-    OVERDUE("Просроченный");
+    ARRESTED("Арестованный");
 
     private final String value;
 
-    ProductStatus(String value) {
+    ClientProductStatus(String value) {
         this.value = value;
     }
 

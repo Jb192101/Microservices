@@ -42,6 +42,9 @@ public class ProductRegistry {
     @Column(name = "status", nullable = false)
     private ProductStatus status = ProductStatus.ACTIVE;
 
+    @Column(name="month_count", nullable = false)
+    private Integer monthCount;
+
     public ProductRegistry(Long id, Long clientId, Long accountId, Long productId, BigDecimal interestRate,
                            LocalDate openDate, LocalDate closeDate, ProductStatus status) {
         this.id = id;

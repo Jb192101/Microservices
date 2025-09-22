@@ -1,13 +1,18 @@
 package entity;
 
 public enum TransactionType {
-    DEPOSIT,
-    WITHDRAWAL,
-    TRANSFER_IN,
-    TRANSFER_OUT,
-    PAYMENT,
-    FEE,
-    INTEREST,
-    REFUND,
-    CARD_PURCHASE
+    DEPOSIT("Депозит"),
+    WITHDRAWAL("Вывод"),
+    TRANSFER_IN("Перевод на счёт"),
+    TRANSFER_OUT("Перевод со счёта"),
+    PAYMENT("Оплата"),
+    FEE("Комиссия"),
+    INTEREST("Проценты"),
+    REFUND("Возврат средств");
+
+    private final String value;
+
+    TransactionType(String value) {
+        this.value = value;
+    }
 }

@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>account-processing-service</artifactId>
+    <artifactId>client-processing-service</artifactId>
 
     <dependencies>
         <dependency>

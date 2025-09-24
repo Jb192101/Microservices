@@ -91,4 +91,9 @@ public class AccountService {
             throw new IllegalArgumentException("У клиента уже есть активная учетная запись для этого продукта!");
         }
     }
+
+    public boolean isAccountActive(Long accountId) {
+        Account account = getAccountById(accountId);
+        return account.getStatus() == AccountStatus.ACTIVE;
+    }
 }

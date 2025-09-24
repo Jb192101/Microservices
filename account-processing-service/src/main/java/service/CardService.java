@@ -72,6 +72,10 @@ public class CardService {
     }
 
     private void validateCard(Card card) {
+        if (!accountService.isAccountActive(card.getAccountId())) {
+            throw new IllegalArgumentException("Счет заблокирован или закрыт, нельзя создать карту!");
+        }
+
         if (cardRepository.existsByAccountIdAndStatus(card.getAccountId(), CardStatus.ACTIVE)) {
             throw new IllegalArgumentException("Аккаунт уже обладает действующей картой!");
         }

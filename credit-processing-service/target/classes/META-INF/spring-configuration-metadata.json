@@ -1,0 +1,22 @@
+{
+  "groups": [
+    {
+      "name": "credit.limit",
+      "type": "configuration.CreditLimitConfig",
+      "sourceType": "configuration.CreditLimitConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "credit.limit.max-overdue-days",
+      "type": "java.lang.Integer",
+      "sourceType": "configuration.CreditLimitConfig"
+    },
+    {
+      "name": "credit.limit.max-total-debt",
+      "type": "java.math.BigDecimal",
+      "sourceType": "configuration.CreditLimitConfig"
+    }
+  ],
+  "hints": []
+}

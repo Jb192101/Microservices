@@ -91,4 +91,10 @@ public class TransactionService {
             throw new IllegalArgumentException("Transaction amount must be positive");
         }
     }
+
+    public boolean isSuspiciousActivity(Long cardId) {
+        LocalDateTime startTime = LocalDateTime.now().minusHours(1);
+        int transactionCount = transactionRepository.countByCardIdAndTimestampAfter(cardId, startTime);
+        return transactionCount > 10;
+    }
 }

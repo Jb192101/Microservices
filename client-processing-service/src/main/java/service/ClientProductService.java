@@ -5,6 +5,7 @@ import entity.ClientProductStatus;
 import entity.ProductKey;
 import kafka.KafkaProducer;
 import kafka.dto.ClientCardMessage;
+import kafka.dto.ClientProductMessage;
 import kafka.dto.CreditDTO;
 import repository.ClientProductRepository;
 
@@ -96,13 +97,17 @@ public class ClientProductService {
 
     private void kafkaDecision(ClientProduct clientProduct, BigDecimal amount) {
         if(isTypeFirst(clientProduct.getProduct().getKey())) {
-            kafkaProducer.sendClientProductEvent(clientProduct, "DELETED");
+            ClientProductMessage msg = new ClientProductMessage(
+                Long.valueOf(clientProduct.getProduct().getProductId()),
+                    Long.valueOf(clientProduct.getClient().getClientId())
+            );
+            kafkaProducer.sendClientProductEvent(msg, "CREATED");
         } else if(isTypeSecond(clientProduct.getProduct().getKey())) {
             kafkaProducer.sendClientCreditProductEvent(new CreditDTO(
                         clientProduct.getClient().getClientId(),
                         amount
                     ),
-                    "DELETED");
+                    "CREATED");
         }
     }
 

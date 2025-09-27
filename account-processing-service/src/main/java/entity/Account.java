@@ -5,6 +5,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "accounts")
@@ -56,6 +57,11 @@ public class Account {
         this.isRecalc = isRecalc;
         this.cardExist = cardExist;
         this.status = status;
+    }
+
+    public Account(Long clientId, Long productId) {
+        this.clientId = clientId;
+        this.productId = productId;
     }
 
     public Long getId() {

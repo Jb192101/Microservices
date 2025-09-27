@@ -70,4 +70,12 @@ public class KafkaConfig {
                 .partitions(3)
                 .build();
     }
+
+    @Bean
+    public NewTopic clientPaymentsTopic() {
+        return TopicBuilder
+                .name("client_payments")
+                .partitions(3)
+                .build();
+    }
 }

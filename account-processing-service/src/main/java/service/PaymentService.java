@@ -1,6 +1,8 @@
 package service;
 
+import entity.Account;
 import entity.Payment;
+import entity.PaymentType;
 import repository.PaymentRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,5 +75,81 @@ public class PaymentService {
         }
 
         accountService.getAccountById(payment.getAccountId());
+    }
+
+    public BigDecimal calculateCreditDebt(Long accountId) {
+        List<Payment> unpaidPayments = paymentRepository.findUnpaidPaymentsByAccountId(accountId);
+        return unpaidPayments.stream()
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void updateExistingPayments(Long accountId) {
+        List<Payment> payments = paymentRepository.findByAccountId(accountId);
+        payments.forEach(payment -> payment.setPayedAt(LocalDateTime.now()));
+        paymentRepository.saveAll(payments);
+    }
+
+    public void createPaymentSchedule(Long accountId, BigDecimal interestRate) {
+        try {
+            Account account = accountService.getAccountById(accountId);
+            if (account == null || !account.getRecalc()) {
+                return;
+            }
+
+            BigDecimal loanAmount = account.getBalance();
+            int loanTermMonths = 12;
+            BigDecimal monthlyInterestRate = interestRate.divide(BigDecimal.valueOf(100), 6, BigDecimal.ROUND_HALF_UP)
+                    .divide(BigDecimal.valueOf(12), 6, BigDecimal.ROUND_HALF_UP);
+
+            // Расчет аннуитетного платежа
+            BigDecimal temp = BigDecimal.ONE.add(monthlyInterestRate);
+            BigDecimal powered = temp.pow(loanTermMonths);
+            BigDecimal coefficient = monthlyInterestRate.multiply(powered)
+                    .divide(powered.subtract(BigDecimal.ONE), 6, BigDecimal.ROUND_HALF_UP);
+            BigDecimal monthlyPayment = coefficient.multiply(loanAmount).setScale(2, BigDecimal.ROUND_HALF_UP);
+
+            LocalDateTime now = LocalDateTime.now();
+
+            // Создание графика платежей на каждый месяц
+            for (int i = 1; i <= loanTermMonths; i++) {
+                Payment payment = new Payment();
+                payment.setAccountId(accountId);
+                payment.setPaymentDate(now.plusMonths(i));
+                payment.setAmount(monthlyPayment);
+                payment.setIsCredit(true);
+                payment.setType(PaymentType.LOAN_PAYMENT);
+                payment.setExpired(false);
+
+                paymentRepository.save(payment);
+            }
+
+        } catch (Exception e) {
+        }
+    }
+
+    public boolean isPaymentDue(Long accountId) {
+        try {
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime startOfDay = now.toLocalDate().atStartOfDay();
+            LocalDateTime endOfDay = now.toLocalDate().atTime(23, 59, 59);
+
+            List<Payment> duePayments = paymentRepository.findByAccountIdAndPaymentDateBetween(accountId, startOfDay, endOfDay);
+
+            if (duePayments.isEmpty()) {
+                return false;
+            }
+
+            for (Payment payment : duePayments) {
+                if (payment.getPayedAt() == null && !Boolean.TRUE.equals(payment.getExpired())) {
+                    return true;
+                }
+            }
+
+            return false;
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

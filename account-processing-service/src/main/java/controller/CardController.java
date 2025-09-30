@@ -1,5 +1,7 @@
 package controller;
 
+import aop.annotations.HttpIncomeRequestLog;
+import aop.annotations.HttpOutcomeRequestLog;
 import entity.Card;
 import entity.CardStatus;
 import service.CardService;
@@ -22,26 +24,31 @@ public class CardController {
     private CardService cardService;
 
     @GetMapping
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Card>> getAllCards() {
         return ResponseEntity.ok(cardService.getAllCards());
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Card> getCardById(@PathVariable Long id) {
         return ResponseEntity.ok(cardService.getCardById(id));
     }
 
     @GetMapping("/card/{cardId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Card> getCardByCardId(@PathVariable String cardId) {
         return ResponseEntity.ok(cardService.getCardByCardId(cardId));
     }
 
     @GetMapping("/account/{accountId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Card>> getCardsByAccountId(@PathVariable Long accountId) {
         return ResponseEntity.ok(cardService.getCardsByAccountId(accountId));
     }
 
     @PostMapping
+    @HttpIncomeRequestLog
     public ResponseEntity<Card> createCard(@Valid @RequestBody Card card) {
         return ResponseEntity.ok(cardService.createCard(card));
     }

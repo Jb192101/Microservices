@@ -31,4 +31,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.accountId = :accountId AND t.type = 'WITHDRAWAL' AND t.status = 'COMPLETE'")
     Double getTotalWithdrawalsByAccountId(@Param("accountId") Long accountId);
+
+    int countByCardIdAndTimestampAfter(Long cardId, LocalDateTime timestamp);
 }

@@ -1,5 +1,7 @@
 package controller;
 
+import aop.annotations.HttpIncomeRequestLog;
+import aop.annotations.HttpOutcomeRequestLog;
 import entity.Payment;
 import service.PaymentService;
 
@@ -23,21 +25,25 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @GetMapping
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Payment>> getAllPayments() {
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Payment> getPaymentById(@PathVariable Long id) {
         return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
 
     @GetMapping("/account/{accountId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Payment>> getPaymentsByAccountId(@PathVariable Long accountId) {
         return ResponseEntity.ok(paymentService.getPaymentsByAccountId(accountId));
     }
 
     @GetMapping("/account/{accountId}/range")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Payment>> getPaymentsByAccountIdAndDateRange(
             @PathVariable Long accountId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
@@ -46,6 +52,7 @@ public class PaymentController {
     }
 
     @PostMapping
+    @HttpIncomeRequestLog
     public ResponseEntity<Payment> createPayment(@Valid @RequestBody Payment payment) {
         return ResponseEntity.ok(paymentService.createPayment(payment));
     }

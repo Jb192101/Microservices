@@ -1,5 +1,7 @@
 package controller;
 
+import aop.annotations.HttpIncomeRequestLog;
+import aop.annotations.HttpOutcomeRequestLog;
 import entity.PaymentRegistry;
 import service.PaymentRegistryService;
 
@@ -22,32 +24,38 @@ public class PaymentRegistryController {
     }
 
     @GetMapping
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentRegistry>> getAllPayments() {
         return ResponseEntity.ok(paymentRegistryService.getAllPayments());
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<PaymentRegistry> getPaymentById(@PathVariable Long id) {
         return ResponseEntity.ok(paymentRegistryService.getPaymentById(id));
     }
 
     @GetMapping("/product/{productRegistryId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentRegistry>> getPaymentsByProductRegistryId(
             @PathVariable Long productRegistryId) {
         return ResponseEntity.ok(paymentRegistryService.getPaymentsByProductRegistryId(productRegistryId));
     }
 
     @GetMapping("/client/{clientId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentRegistry>> getPaymentsByClientId(@PathVariable Long clientId) {
         return ResponseEntity.ok(paymentRegistryService.getPaymentsByClientId(clientId));
     }
 
     @PostMapping
+    @HttpIncomeRequestLog
     public ResponseEntity<PaymentRegistry> createPayment(@Valid @RequestBody PaymentRegistry paymentRegistry) {
         return ResponseEntity.ok(paymentRegistryService.createPayment(paymentRegistry));
     }
 
     @PostMapping("/{id}/process")
+    @HttpIncomeRequestLog
     public ResponseEntity<PaymentRegistry> processPayment(@PathVariable Long id) {
         return ResponseEntity.ok(paymentRegistryService.processPayment(id));
     }

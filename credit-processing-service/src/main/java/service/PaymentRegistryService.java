@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.PaymentRegistry;
 import entity.PaymentStatus;
 import entity.ProductRegistry;
@@ -33,24 +34,29 @@ public class PaymentRegistryService {
         this.productRegistryService = productRegistryService;
     }
 
+    @LogDatasourceError
     public List<PaymentRegistry> getAllPayments() {
         return paymentRegistryRepository.findAll();
     }
 
+    @LogDatasourceError
     public PaymentRegistry getPaymentById(Long id) {
         return paymentRegistryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Платёжный реестр с ID не найден: " + id));
     }
 
+    @LogDatasourceError
     public List<PaymentRegistry> getPaymentsByProductRegistryId(Long productRegistryId) {
         return paymentRegistryRepository.findByProductRegistryId(productRegistryId);
     }
 
+    @LogDatasourceError
     public List<PaymentRegistry> getPaymentsByClientId(Long clientId) {
         return paymentRegistryRepository.findByClientId(clientId);
     }
 
     @Transactional
+    @LogDatasourceError
     public PaymentRegistry createPayment(PaymentRegistry paymentRegistry) {
         validatePayment(paymentRegistry);
 
@@ -70,6 +76,7 @@ public class PaymentRegistryService {
     }
 
     @Transactional
+    @LogDatasourceError
     public PaymentRegistry processPayment(Long paymentId) {
         PaymentRegistry payment = getPaymentById(paymentId);
 
@@ -85,6 +92,7 @@ public class PaymentRegistryService {
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
+    @LogDatasourceError
     public void checkOverduePayments() {
         LocalDate today = LocalDate.now();
         List<PaymentRegistry> overduePayments = paymentRegistryRepository.findOverduePayments(today);

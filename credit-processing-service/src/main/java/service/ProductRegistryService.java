@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.ProductRegistry;
 import entity.ProductStatus;
 import lombok.RequiredArgsConstructor;
@@ -18,24 +19,29 @@ public class ProductRegistryService {
     @Autowired
     private ProductRegistryRepository productRegistryRepository;
 
+    @LogDatasourceError
     public List<ProductRegistry> getAllProducts() {
         return productRegistryRepository.findAll();
     }
 
+    @LogDatasourceError
     public ProductRegistry getProductById(Long id) {
         return productRegistryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product registry not found with id: " + id));
     }
 
+    @LogDatasourceError
     public List<ProductRegistry> getProductsByClientId(Long clientId) {
         return productRegistryRepository.findByClientId(clientId);
     }
 
+    @LogDatasourceError
     public List<ProductRegistry> getActiveProductsByClientId(Long clientId) {
         return productRegistryRepository.findActiveProductsByClientId(clientId);
     }
 
     @Transactional
+    @LogDatasourceError
     public ProductRegistry createProduct(ProductRegistry productRegistry) {
         validateProductRegistry(productRegistry);
         productRegistry.setOpenDate(LocalDate.now());
@@ -44,6 +50,7 @@ public class ProductRegistryService {
     }
 
     @Transactional
+    @LogDatasourceError
     public ProductRegistry updateProductStatus(Long id, ProductStatus status) {
         ProductRegistry product = getProductById(id);
         product.setStatus(status);
@@ -58,6 +65,7 @@ public class ProductRegistryService {
         updateProductStatus(id, ProductStatus.CLOSED);
     }
 
+    @LogDatasourceError
     private void validateProductRegistry(ProductRegistry productRegistry) {
         if (productRegistry.getInterestRate().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Interest rate must be positive");

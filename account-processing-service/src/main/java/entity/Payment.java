@@ -39,6 +39,9 @@ public class Payment {
     @Column(nullable = false, length = 30)
     private PaymentType type;
 
+    @Column(name = "expired")
+    private Boolean expired = false;
+
     public Payment() {}
 
     public Payment(Long id, Long accountId, LocalDateTime paymentDate, BigDecimal amount, Boolean isCredit,
@@ -107,4 +110,8 @@ public class Payment {
     public void setType(PaymentType type) {
         this.type = type;
     }
+
+    public Boolean getExpired() { return expired; }
+
+    public void setExpired(Boolean expired) { this.expired = expired; }
 }

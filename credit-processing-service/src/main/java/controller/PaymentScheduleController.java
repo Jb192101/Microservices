@@ -1,5 +1,6 @@
 package controller;
 
+import aop.annotations.HttpOutcomeRequestLog;
 import kafka.dto.PaymentScheduleDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ public class PaymentScheduleController {
 
     // Получение графика платежей по ID продукта
     @GetMapping("/product/{productRegistryId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentScheduleDTO>> getPaymentScheduleByProduct(
             @PathVariable Long productRegistryId) {
         try {
@@ -44,6 +46,7 @@ public class PaymentScheduleController {
 
     // Получение графика платежей по ID клиента
     @GetMapping("/client/{clientId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentScheduleDTO>> getPaymentScheduleByClient(
             @PathVariable Long clientId) {
         try {
@@ -71,6 +74,7 @@ public class PaymentScheduleController {
      * Получение ближайших платежей по ID продукта
      */
     @GetMapping("/product/{productRegistryId}/upcoming")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentScheduleDTO>> getUpcomingPayments(
             @PathVariable Long productRegistryId,
             @RequestParam(defaultValue = "3") Integer count) {
@@ -104,6 +108,7 @@ public class PaymentScheduleController {
 
      // Получение просроченных платежей по ID продукта
     @GetMapping("/product/{productRegistryId}/overdue")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<PaymentScheduleDTO>> getOverduePayments(
             @PathVariable Long productRegistryId) {
         try {

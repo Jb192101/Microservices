@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.PaymentRegistry;
 import entity.PaymentStatus;
 import entity.ProductRegistry;
@@ -36,6 +37,7 @@ public class PaymentScheduleService {
     }
 
     @Transactional
+    @LogDatasourceError
     public List<PaymentRegistry> createAndSavePaymentSchedule(ProductRegistry product,
                                                               BigDecimal loanAmount,
                                                               BigDecimal annualRate,

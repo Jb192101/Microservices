@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.Account;
 import entity.AccountStatus;
 import repository.AccountRepository;
@@ -23,30 +24,36 @@ public class AccountService {
         this.transactionService = transactionService;
     }
 
+    @LogDatasourceError
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
 
+    @LogDatasourceError
     public Account getAccountById(Long id) {
         return accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Аккаунта с ID не существует: " + id));
     }
 
+    @LogDatasourceError
     public List<Account> getAccountsByClientId(Long clientId) {
         return accountRepository.findByClientId(clientId);
     }
 
+    @LogDatasourceError
     public List<Account> getActiveAccountsByClientId(Long clientId) {
         return accountRepository.findActiveAccountsByClientId(clientId);
     }
 
     @Transactional
+    @LogDatasourceError
     public Account createAccount(Account account) {
         validateAccount(account);
         return accountRepository.save(account);
     }
 
     @Transactional
+    @LogDatasourceError
     public Account updateAccountBalance(Long accountId, BigDecimal amount, boolean isCredit) {
         Account account = getAccountById(accountId);
 
@@ -65,6 +72,7 @@ public class AccountService {
     }
 
     @Transactional
+    @LogDatasourceError
     public Account updateAccountStatus(Long id, AccountStatus status) {
         Account account = getAccountById(id);
         account.setStatus(status);
@@ -72,6 +80,7 @@ public class AccountService {
     }
 
     @Transactional
+    @LogDatasourceError
     public void closeAccount(Long id) {
         Account account = getAccountById(id);
         if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
@@ -81,6 +90,7 @@ public class AccountService {
         accountRepository.save(account);
     }
 
+    @LogDatasourceError
     private void validateAccount(Account account) {
         if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Начальный баланс не может быть отрицательным!");
@@ -92,6 +102,7 @@ public class AccountService {
         }
     }
 
+    @LogDatasourceError
     public boolean isAccountActive(Long accountId) {
         Account account = getAccountById(accountId);
         return account.getStatus() == AccountStatus.ACTIVE;

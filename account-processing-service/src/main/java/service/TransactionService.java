@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.Payment;
 import entity.Transaction;
 import entity.TransactionStatus;
@@ -23,23 +24,28 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
+    @LogDatasourceError
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();
     }
 
+    @LogDatasourceError
     public Transaction getTransactionById(Long id) {
         return transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found with id: " + id));
     }
 
+    @LogDatasourceError
     public List<Transaction> getTransactionsByAccountId(Long accountId) {
         return transactionRepository.findByAccountId(accountId);
     }
 
+    @LogDatasourceError
     public List<Transaction> getTransactionsByAccountIdAndDateRange(Long accountId, LocalDateTime start, LocalDateTime end) {
         return transactionRepository.findByAccountIdAndDateRange(accountId, start, end);
     }
 
+    @LogDatasourceError
     public BigDecimal getAccountBalance(Long accountId) {
         Double deposits = transactionRepository.getTotalDepositsByAccountId(accountId);
         Double withdrawals = transactionRepository.getTotalWithdrawalsByAccountId(accountId);
@@ -51,6 +57,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @LogDatasourceError
     public Transaction createTransaction(Transaction transaction) {
         validateTransaction(transaction);
 
@@ -80,6 +87,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @LogDatasourceError
     public Transaction updateTransactionStatus(Long id, TransactionStatus status) {
         Transaction transaction = getTransactionById(id);
         transaction.setStatus(status);
@@ -92,6 +100,7 @@ public class TransactionService {
         }
     }
 
+    @LogDatasourceError
     public boolean isSuspiciousActivity(Long cardId) {
         LocalDateTime startTime = LocalDateTime.now().minusHours(1);
         int transactionCount = transactionRepository.countByCardIdAndTimestampAfter(cardId, startTime);

@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.Card;
 import entity.CardStatus;
 import repository.CardRepository;
@@ -23,29 +24,35 @@ public class CardService {
         this.accountService = accountService;
     }
 
+    @LogDatasourceError
     public List<Card> getAllCards() {
         return cardRepository.findAll();
     }
 
+    @LogDatasourceError
     public Card getCardById(Long id) {
         return cardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Карта с ID не существует: " + id));
     }
 
+    @LogDatasourceError
     public Card getCardByCardId(String cardId) {
         return cardRepository.findByCardId(cardId)
                 .orElseThrow(() -> new RuntimeException("Карта с cardID не существует: " + cardId));
     }
 
+    @LogDatasourceError
     public List<Card> getCardsByAccountId(Long accountId) {
         return cardRepository.findByAccountId(accountId);
     }
 
+    @LogDatasourceError
     public List<Card> getActiveCardsByAccountId(Long accountId) {
         return cardRepository.findActiveCardsByAccountId(accountId);
     }
 
     @Transactional
+    @LogDatasourceError
     public Card createCard(Card card) {
         validateCard(card);
 
@@ -60,6 +67,7 @@ public class CardService {
     }
 
     @Transactional
+    @LogDatasourceError
     public Card updateCardStatus(Long id, CardStatus status) {
         Card card = getCardById(id);
         card.setStatus(status);
@@ -67,10 +75,12 @@ public class CardService {
     }
 
     @Transactional
+    @LogDatasourceError
     public void blockCard(Long id) {
         updateCardStatus(id, CardStatus.BLOCKED);
     }
 
+    @LogDatasourceError
     private void validateCard(Card card) {
         if (!accountService.isAccountActive(card.getAccountId())) {
             throw new IllegalArgumentException("Счет заблокирован или закрыт, нельзя создать карту!");

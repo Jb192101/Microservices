@@ -1,5 +1,6 @@
 package service;
 
+import aop.annotations.LogDatasourceError;
 import entity.Account;
 import entity.Payment;
 import entity.PaymentType;
@@ -29,24 +30,29 @@ public class PaymentService {
         this.transactionService = transactionService;
     }
 
+    @LogDatasourceError
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
     }
 
+    @LogDatasourceError
     public Payment getPaymentById(Long id) {
         return paymentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Платёж с ID не найден: " + id));
     }
 
+    @LogDatasourceError
     public List<Payment> getPaymentsByAccountId(Long accountId) {
         return paymentRepository.findByAccountId(accountId);
     }
 
+    @LogDatasourceError
     public List<Payment> getPaymentsByAccountIdAndDateRange(Long accountId, LocalDateTime start, LocalDateTime end) {
         return paymentRepository.findByAccountIdAndDateRange(accountId, start, end);
     }
 
     @Transactional
+    @LogDatasourceError
     public Payment createPayment(Payment payment) {
         validatePayment(payment);
 
@@ -69,6 +75,7 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
+    @LogDatasourceError
     private void validatePayment(Payment payment) {
         if (payment.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Сумма оплаты должна быть положительной!");
@@ -77,6 +84,7 @@ public class PaymentService {
         accountService.getAccountById(payment.getAccountId());
     }
 
+    @LogDatasourceError
     public BigDecimal calculateCreditDebt(Long accountId) {
         List<Payment> unpaidPayments = paymentRepository.findUnpaidPaymentsByAccountId(accountId);
         return unpaidPayments.stream()
@@ -84,12 +92,14 @@ public class PaymentService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    @LogDatasourceError
     public void updateExistingPayments(Long accountId) {
         List<Payment> payments = paymentRepository.findByAccountId(accountId);
         payments.forEach(payment -> payment.setPayedAt(LocalDateTime.now()));
         paymentRepository.saveAll(payments);
     }
 
+    @LogDatasourceError
     public void createPaymentSchedule(Long accountId, BigDecimal interestRate) {
         try {
             Account account = accountService.getAccountById(accountId);
@@ -128,6 +138,7 @@ public class PaymentService {
         }
     }
 
+    @LogDatasourceError
     public boolean isPaymentDue(Long accountId) {
         try {
             LocalDateTime now = LocalDateTime.now();

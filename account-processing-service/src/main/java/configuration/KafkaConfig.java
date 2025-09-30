@@ -78,4 +78,13 @@ public class KafkaConfig {
                 .partitions(3)
                 .build();
     }
+
+    @Bean
+    public NewTopic serviceLogsTopic() {
+        return TopicBuilder
+                .name("service_logs")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
 }

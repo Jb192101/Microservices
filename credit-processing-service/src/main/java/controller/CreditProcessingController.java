@@ -1,5 +1,7 @@
 package controller;
 
+import aop.annotations.HttpIncomeRequestLog;
+import aop.annotations.HttpOutcomeRequestLog;
 import kafka.dto.CreditDecisionDTO;
 import kafka.dto.CreditProductRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ public class CreditProcessingController {
     private final CreditDecisionService creditDecisionService;
 
     @PostMapping("/decision")
+    @HttpIncomeRequestLog
     public ResponseEntity<CreditDecisionDTO> makeCreditDecision(
             @RequestBody CreditProductRequestDTO request) {
         CreditDecisionDTO decision = creditDecisionService.makeCreditDecision(request);
@@ -23,6 +26,7 @@ public class CreditProcessingController {
     }
 
     @GetMapping("/health")
+    @HttpOutcomeRequestLog
     public ResponseEntity<String> healthCheck() {
         return ResponseEntity.ok("MS-3 Credit Processing Service is running");
     }

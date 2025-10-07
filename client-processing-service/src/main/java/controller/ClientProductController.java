@@ -22,8 +22,14 @@ public class ClientProductController {
     private ClientProductService clientProductService;
 
     @PostMapping
-    public ResponseEntity<ClientProduct> assignProductToClient(@Valid @RequestBody ClientProduct clientProduct) {
-        ClientProduct assignedProduct = clientProductService.assignProductToClient(clientProduct);
+    public ResponseEntity<ClientProduct> assignProductToClient(@Valid @RequestBody ClientProduct clientProduct, Long accountId,
+                                                               String paymentSystem, String cardType) {
+        ClientProduct assignedProduct = clientProductService.assignProductToClient(
+                clientProduct,
+                accountId,
+                paymentSystem,
+                cardType
+                );
         return ResponseEntity.ok(assignedProduct);
     }
 

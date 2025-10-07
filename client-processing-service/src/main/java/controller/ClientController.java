@@ -1,6 +1,8 @@
 package controller;
 
 import entity.Client;
+import entity.User;
+import repository.BlackListRepository;
 import service.ClientService;
 
 import jakarta.validation.Valid;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import service.UserService;
 
 import java.util.List;
 
@@ -21,9 +24,22 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BlackListRepository blackListRepository;
+
     @PostMapping
     public ResponseEntity<Client> createClient(@Valid @RequestBody Client client) {
+        if(blackListRepository.existsByBlacklistRegistryDocumentId(client.getDocumentId())) {
+            return ResponseEntity.notFound().build();
+        }
+
         Client createdClient = clientService.createClient(client);
+
+        userService.createUser(new User());
+
         return ResponseEntity.ok(createdClient);
     }
 

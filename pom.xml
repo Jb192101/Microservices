@@ -15,7 +15,8 @@
 		<module>client-processing-service</module>
 		<module>credit-processing-service</module>
 		<module>account-processing-service</module>
-	</modules>
+        <module>app-starter</module>
+    </modules>
 
 	<dependencies>
 		<dependency>

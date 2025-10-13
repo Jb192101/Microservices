@@ -152,3 +152,38 @@ databaseChangeLog:
                   type: VARCHAR(20)
                   constraints:
                     nullable: false
+
+        - createTable:
+            tableName: error_log
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: microservice_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValue: "CURRENT_TIMESTAMP"

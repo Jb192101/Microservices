@@ -47,6 +47,12 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.t1</groupId>
+            <artifactId>aop-logging-starter</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>

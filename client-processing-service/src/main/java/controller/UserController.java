@@ -1,5 +1,7 @@
 package controller;
 
+import com.t1.starter.pack.aop.annotations.HttpIncomeRequestLog;
+import com.t1.starter.pack.aop.annotations.HttpOutcomeRequestLog;
 import entity.User;
 import service.UserService;
 
@@ -21,12 +23,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
+    @HttpIncomeRequestLog
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User createdUser = userService.createUser(user);
         return ResponseEntity.ok(createdUser);
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
@@ -34,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/login/{login}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<User> getUserByLogin(@PathVariable String login) {
         return userService.getUserByLogin(login)
                 .map(ResponseEntity::ok)
@@ -41,11 +46,13 @@ public class UserController {
     }
 
     @GetMapping
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PutMapping("/{id}")
+    @HttpIncomeRequestLog
     public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
         try {
             User updatedUser = userService.updateUser(id, user);
@@ -56,6 +63,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @HttpIncomeRequestLog
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);

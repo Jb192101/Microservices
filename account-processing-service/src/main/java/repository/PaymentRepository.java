@@ -23,4 +23,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
             @Param("accountId") Long accountId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    List<Payment> findUnpaidPaymentsByAccountId(Long accountId);
+    List<Payment> findByAccountIdAndPaymentDateBetween(Long accountId, LocalDateTime start, LocalDateTime end);
 }

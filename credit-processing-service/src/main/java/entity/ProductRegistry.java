@@ -45,6 +45,8 @@ public class ProductRegistry {
     @Column(name="month_count", nullable = false)
     private Integer monthCount;
 
+    public ProductRegistry() {}
+
     public ProductRegistry(Long id, Long clientId, Long accountId, Long productId, BigDecimal interestRate,
                            LocalDate openDate, LocalDate closeDate, ProductStatus status) {
         this.id = id;
@@ -55,6 +57,14 @@ public class ProductRegistry {
         this.openDate = openDate;
         this.closeDate = closeDate;
         this.status = status;
+    }
+
+    public Integer getMonthCount() {
+        return monthCount;
+    }
+
+    public void setMonthCount(Integer monthCount) {
+        this.monthCount = monthCount;
     }
 
     public Long getId() {

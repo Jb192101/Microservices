@@ -1,5 +1,6 @@
 package service;
 
+import com.t1.starter.pack.aop.annotations.LogDatasourceError;
 import entity.Product;
 import entity.ProductKey;
 import repository.ProductRepository;
@@ -34,22 +35,27 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @LogDatasourceError
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
 
+    @LogDatasourceError
     public Optional<Product> getProductByKey(ProductKey key) {
         return productRepository.findByKey(key);
     }
 
+    @LogDatasourceError
     public List<Product> getProductsByKeys(List<ProductKey> keys) {
         return productRepository.findByKeyIn(keys);
     }
 
+    @LogDatasourceError
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
+    @LogDatasourceError
     public Product updateProduct(Long id, Product productDetails) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Продукт с id не найден: " + id));
@@ -66,6 +72,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    @LogDatasourceError
     public void deleteProduct(Long id) {
         if (!productRepository.existsById(id)) {
             throw new IllegalArgumentException("Продукт с id не найден: " + id);

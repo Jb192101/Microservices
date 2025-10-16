@@ -1,5 +1,7 @@
 package controller;
 
+import com.t1.starter.pack.aop.annotations.HttpIncomeRequestLog;
+import com.t1.starter.pack.aop.annotations.HttpOutcomeRequestLog;
 import entity.ClientProduct;
 import entity.ClientProductStatus;
 import service.ClientProductService;
@@ -22,12 +24,22 @@ public class ClientProductController {
     private ClientProductService clientProductService;
 
     @PostMapping
-    public ResponseEntity<ClientProduct> assignProductToClient(@Valid @RequestBody ClientProduct clientProduct) {
-        ClientProduct assignedProduct = clientProductService.assignProductToClient(clientProduct);
+    @HttpIncomeRequestLog
+    public ResponseEntity<ClientProduct> assignProductToClient(@Valid @RequestBody ClientProduct clientProduct,
+                                                               @RequestParam Long accountId,
+                                                               @RequestParam String paymentSystem,
+                                                               @RequestParam String cardType) {
+        ClientProduct assignedProduct = clientProductService.assignProductToClient(
+                clientProduct,
+                accountId,
+                paymentSystem,
+                cardType
+                );
         return ResponseEntity.ok(assignedProduct);
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<ClientProduct> getClientProductById(@PathVariable Long id) {
         return clientProductService.getClientProductById(id)
                 .map(ResponseEntity::ok)
@@ -35,16 +47,19 @@ public class ClientProductController {
     }
 
     @GetMapping("/client/{clientId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<ClientProduct>> getClientProductsByClientId(@PathVariable Long clientId) {
         return ResponseEntity.ok(clientProductService.getClientProductsByClientId(clientId));
     }
 
     @GetMapping("/client/{clientId}/active")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<ClientProduct>> getActiveClientProducts(@PathVariable Long clientId) {
         return ResponseEntity.ok(clientProductService.getActiveClientProducts(clientId));
     }
 
     @PatchMapping("/{id}/status")
+    @HttpIncomeRequestLog
     public ResponseEntity<ClientProduct> updateClientProductStatus(
             @PathVariable Long id,
             @RequestParam ClientProductStatus status) {
@@ -57,6 +72,7 @@ public class ClientProductController {
     }
 
     @DeleteMapping("/{id}")
+    @HttpIncomeRequestLog
     public ResponseEntity<Void> removeProductFromClient(@PathVariable Long id) {
         try {
             clientProductService.removeProductFromClient(id);

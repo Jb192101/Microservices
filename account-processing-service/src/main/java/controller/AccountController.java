@@ -1,7 +1,10 @@
 package controller;
 
+import com.t1.starter.pack.aop.annotations.HttpIncomeRequestLog;
+import com.t1.starter.pack.aop.annotations.HttpOutcomeRequestLog;
 import entity.Account;
 import entity.AccountStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import service.AccountService;
 
 import jakarta.validation.Valid;
@@ -23,31 +26,38 @@ public class AccountController {
     private AccountService accountService;
 
     @GetMapping
+    @HttpOutcomeRequestLog
+    @PreAuthorize("hasRole('MASTER')")
     public ResponseEntity<List<Account>> getAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
 
     @GetMapping("/client/{clientId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Account>> getAccountsByClientId(@PathVariable Long clientId) {
         return ResponseEntity.ok(accountService.getAccountsByClientId(clientId));
     }
 
     @GetMapping("/client/{clientId}/active")
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Account>> getActiveAccountsByClientId(@PathVariable Long clientId) {
         return ResponseEntity.ok(accountService.getActiveAccountsByClientId(clientId));
     }
 
     @PostMapping
+    @HttpIncomeRequestLog
     public ResponseEntity<Account> createAccount(@Valid @RequestBody Account account) {
         return ResponseEntity.ok(accountService.createAccount(account));
     }
 
     @PatchMapping("/{id}/balance")
+    @HttpIncomeRequestLog
     public ResponseEntity<Account> updateAccountBalance(
             @PathVariable Long id,
             @RequestParam BigDecimal amount,
@@ -56,6 +66,8 @@ public class AccountController {
     }
 
     @PatchMapping("/{id}/status")
+    @HttpIncomeRequestLog
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE')")
     public ResponseEntity<Account> updateAccountStatus(
             @PathVariable Long id,
             @RequestParam AccountStatus status) {
@@ -63,6 +75,8 @@ public class AccountController {
     }
 
     @PostMapping("/{id}/close")
+    @HttpIncomeRequestLog
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE')")
     public ResponseEntity<Void> closeAccount(@PathVariable Long id) {
         accountService.closeAccount(id);
         return ResponseEntity.ok().build();

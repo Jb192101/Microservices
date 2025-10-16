@@ -1,9 +1,11 @@
 package service;
 
+import com.t1.starter.pack.aop.annotations.LogDatasourceError;
 import entity.PaymentRegistry;
 import entity.PaymentStatus;
 import entity.ProductRegistry;
 import entity.ProductStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import repository.PaymentRegistryRepository;
 import repository.ProductRegistryRepository;
 
@@ -33,24 +35,34 @@ public class PaymentRegistryService {
         this.productRegistryService = productRegistryService;
     }
 
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public List<PaymentRegistry> getAllPayments() {
         return paymentRegistryRepository.findAll();
     }
 
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public PaymentRegistry getPaymentById(Long id) {
         return paymentRegistryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Платёжный реестр с ID не найден: " + id));
     }
 
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public List<PaymentRegistry> getPaymentsByProductRegistryId(Long productRegistryId) {
         return paymentRegistryRepository.findByProductRegistryId(productRegistryId);
     }
 
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public List<PaymentRegistry> getPaymentsByClientId(Long clientId) {
         return paymentRegistryRepository.findByClientId(clientId);
     }
 
     @Transactional
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE')")
     public PaymentRegistry createPayment(PaymentRegistry paymentRegistry) {
         validatePayment(paymentRegistry);
 
@@ -70,6 +82,8 @@ public class PaymentRegistryService {
     }
 
     @Transactional
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public PaymentRegistry processPayment(Long paymentId) {
         PaymentRegistry payment = getPaymentById(paymentId);
 
@@ -85,6 +99,7 @@ public class PaymentRegistryService {
 
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
+    @LogDatasourceError
     public void checkOverduePayments() {
         LocalDate today = LocalDate.now();
         List<PaymentRegistry> overduePayments = paymentRegistryRepository.findOverduePayments(today);

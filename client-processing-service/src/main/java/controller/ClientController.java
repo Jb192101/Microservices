@@ -1,6 +1,10 @@
 package controller;
 
+import com.t1.starter.pack.aop.annotations.HttpIncomeRequestLog;
+import com.t1.starter.pack.aop.annotations.HttpOutcomeRequestLog;
 import entity.Client;
+import entity.User;
+import repository.BlackListRepository;
 import service.ClientService;
 
 import jakarta.validation.Valid;
@@ -11,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import service.UserService;
 
 import java.util.List;
 
@@ -21,13 +26,30 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private BlackListRepository blackListRepository;
+
     @PostMapping
+    @HttpIncomeRequestLog
     public ResponseEntity<Client> createClient(@Valid @RequestBody Client client) {
+        if(blackListRepository.existsByBlacklistRegistryDocumentId(client.getDocumentId())) {
+            return ResponseEntity.notFound().build();
+        }
+
         Client createdClient = clientService.createClient(client);
+
+        User user = new User();
+        userService.createUser(user);
+        createdClient.setUser(user);
+
         return ResponseEntity.ok(createdClient);
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Client> getClientById(@PathVariable Long id) {
         return clientService.getClientById(id)
                 .map(ResponseEntity::ok)
@@ -35,6 +57,7 @@ public class ClientController {
     }
 
     @GetMapping("/client-id/{clientId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Client> getClientByClientId(@PathVariable String clientId) {
         return clientService.getClientByClientId(clientId)
                 .map(ResponseEntity::ok)
@@ -42,6 +65,7 @@ public class ClientController {
     }
 
     @GetMapping("/user/{userId}")
+    @HttpOutcomeRequestLog
     public ResponseEntity<Client> getClientByUserId(@PathVariable Long userId) {
         return clientService.getClientByUserId(userId)
                 .map(ResponseEntity::ok)
@@ -49,11 +73,13 @@ public class ClientController {
     }
 
     @GetMapping
+    @HttpOutcomeRequestLog
     public ResponseEntity<List<Client>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
     }
 
     @PutMapping("/{id}")
+    @HttpIncomeRequestLog
     public ResponseEntity<Client> updateClient(@PathVariable Long id, @Valid @RequestBody Client client) {
         try {
             Client updatedClient = clientService.updateClient(id, client);
@@ -64,6 +90,7 @@ public class ClientController {
     }
 
     @DeleteMapping("/{id}")
+    @HttpIncomeRequestLog
     public ResponseEntity<Void> deleteClient(@PathVariable Long id) {
         try {
             clientService.deleteClient(id);

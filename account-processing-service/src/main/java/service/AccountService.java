@@ -1,7 +1,9 @@
 package service;
 
+import com.t1.starter.pack.aop.annotations.LogDatasourceError;
 import entity.Account;
 import entity.AccountStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import repository.AccountRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,30 +25,37 @@ public class AccountService {
         this.transactionService = transactionService;
     }
 
+    @LogDatasourceError
     public List<Account> getAllAccounts() {
         return accountRepository.findAll();
     }
 
+    @LogDatasourceError
     public Account getAccountById(Long id) {
         return accountRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Аккаунта с ID не существует: " + id));
     }
 
+    @LogDatasourceError
     public List<Account> getAccountsByClientId(Long clientId) {
         return accountRepository.findByClientId(clientId);
     }
 
+    @LogDatasourceError
     public List<Account> getActiveAccountsByClientId(Long clientId) {
         return accountRepository.findActiveAccountsByClientId(clientId);
     }
 
     @Transactional
+    @LogDatasourceError
+    @PreAuthorize("hasRole('MASTER')")
     public Account createAccount(Account account) {
         validateAccount(account);
         return accountRepository.save(account);
     }
 
     @Transactional
+    @LogDatasourceError
     public Account updateAccountBalance(Long accountId, BigDecimal amount, boolean isCredit) {
         Account account = getAccountById(accountId);
 
@@ -65,6 +74,8 @@ public class AccountService {
     }
 
     @Transactional
+    @LogDatasourceError
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE')")
     public Account updateAccountStatus(Long id, AccountStatus status) {
         Account account = getAccountById(id);
         account.setStatus(status);
@@ -72,6 +83,7 @@ public class AccountService {
     }
 
     @Transactional
+    @LogDatasourceError
     public void closeAccount(Long id) {
         Account account = getAccountById(id);
         if (account.getBalance().compareTo(BigDecimal.ZERO) != 0) {
@@ -81,6 +93,7 @@ public class AccountService {
         accountRepository.save(account);
     }
 
+    @LogDatasourceError
     private void validateAccount(Account account) {
         if (account.getBalance().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Начальный баланс не может быть отрицательным!");
@@ -90,5 +103,11 @@ public class AccountService {
                 account.getClientId(), account.getProductId(), AccountStatus.ACTIVE)) {
             throw new IllegalArgumentException("У клиента уже есть активная учетная запись для этого продукта!");
         }
+    }
+
+    @LogDatasourceError
+    public boolean isAccountActive(Long accountId) {
+        Account account = getAccountById(accountId);
+        return account.getStatus() == AccountStatus.ACTIVE;
     }
 }

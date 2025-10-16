@@ -1,14 +1,14 @@
 package controller;
 
+import com.t1.starter.pack.aop.annotations.HttpIncomeRequestLog;
+import com.t1.starter.pack.aop.annotations.HttpOutcomeRequestLog;
 import entity.Product;
 import service.ProductService;
-
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,12 +21,16 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
+    @HttpIncomeRequestLog
+    @PreAuthorize("hasRole('MASTER')")
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.ok(createdProduct);
     }
 
     @GetMapping("/{id}")
+    @HttpOutcomeRequestLog
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productService.getProductById(id)
                 .map(ResponseEntity::ok)
@@ -34,11 +38,15 @@ public class ProductController {
     }
 
     @GetMapping
+    @HttpOutcomeRequestLog
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE', 'CURRENT_CLIENT')")
     public ResponseEntity<List<Product>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @PutMapping("/{id}")
+    @HttpIncomeRequestLog
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE')")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
         try {
             Product updatedProduct = productService.updateProduct(id, product);
@@ -49,6 +57,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @HttpIncomeRequestLog
+    @PreAuthorize("hasAnyRole('MASTER', 'GRAND_EMPLOYEE')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         try {
             productService.deleteProduct(id);

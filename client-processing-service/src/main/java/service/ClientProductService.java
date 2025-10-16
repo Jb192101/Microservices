@@ -28,6 +28,9 @@ public class ClientProductService {
     @Autowired
     private KafkaProducer kafkaProducer;
 
+    @Autowired
+    private ProductMetricsService productMetricsService;
+
     public ClientProductService(ClientProductRepository clientProductRepository) {
         this.clientProductRepository = clientProductRepository;
     }
@@ -56,6 +59,9 @@ public class ClientProductService {
                         cardType
                  ),
                 "CREATED");
+
+        productMetricsService.incrementProductAssignment();
+        productMetricsService.updateProductMetrics();
 
         return clientProductRepository.save(clientProduct);
     }
@@ -88,6 +94,8 @@ public class ClientProductService {
 
         kafkaDecision(clientProduct, BigDecimal.ZERO);
 
+        productMetricsService.updateProductMetrics();
+
         return clientProductRepository.save(clientProduct);
     }
 
@@ -98,6 +106,8 @@ public class ClientProductService {
         }
 
         kafkaDecision(clientProductRepository.findById(id).get(), BigDecimal.ZERO);
+
+        productMetricsService.updateProductMetrics();
 
         clientProductRepository.deleteById(id);
     }

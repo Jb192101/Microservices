@@ -25,8 +25,10 @@ public class ClientProductController {
 
     @PostMapping
     @HttpIncomeRequestLog
-    public ResponseEntity<ClientProduct> assignProductToClient(@Valid @RequestBody ClientProduct clientProduct, Long accountId,
-                                                               String paymentSystem, String cardType) {
+    public ResponseEntity<ClientProduct> assignProductToClient(@Valid @RequestBody ClientProduct clientProduct,
+                                                               @RequestParam Long accountId,
+                                                               @RequestParam String paymentSystem,
+                                                               @RequestParam String cardType) {
         ClientProduct assignedProduct = clientProductService.assignProductToClient(
                 clientProduct,
                 accountId,

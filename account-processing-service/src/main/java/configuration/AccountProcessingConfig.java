@@ -1,5 +1,6 @@
 package configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -20,5 +21,10 @@ public class AccountProcessingConfig {
         return args -> {
             System.out.println("Микросервис обработки аккаунтов запустился!");
         };
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

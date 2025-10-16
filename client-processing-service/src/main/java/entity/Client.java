@@ -1,5 +1,7 @@
 package entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "clients")
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +25,7 @@ public class Client {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @NotNull(message = "Пользователь не может быть пустым!")
+    @JsonIgnore
     private User user;
 
     @Column(name = "first_name")

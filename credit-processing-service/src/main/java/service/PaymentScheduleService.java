@@ -163,7 +163,7 @@ public class PaymentScheduleService {
         return allPayments.indexOf(payment) + 1;
     }
 
-    private BigDecimal calculateRemainingBalance(PaymentRegistry currentPayment) {
+    public BigDecimal calculateRemainingBalance(PaymentRegistry currentPayment) {
         try {
             ProductRegistry product = currentPayment.getProductRegistry();
 

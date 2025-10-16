@@ -9,7 +9,6 @@ public class ClientPaymentMessage {
     private BigDecimal amount;
     private String paymentType;
 
-    // getters and setters
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 

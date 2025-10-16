@@ -41,7 +41,9 @@ public class ClientController {
 
         Client createdClient = clientService.createClient(client);
 
-        userService.createUser(new User());
+        User user = new User();
+        userService.createUser(user);
+        createdClient.setUser(user);
 
         return ResponseEntity.ok(createdClient);
     }

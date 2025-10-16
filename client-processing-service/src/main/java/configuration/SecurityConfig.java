@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/users/login/**").permitAll()
-                        .requestMatchers("/products/**").hasAnyRole("MASTER", "GRAND_EMPLOYEE")
+                        .requestMatchers("/products/**").hasAnyRole("MASTER", "GRAND_EMPLOYEE", "CURRENT_CLIENT")
                         .requestMatchers("/client-products/**").hasAnyRole("MASTER", "GRAND_EMPLOYEE", "CURRENT_CLIENT")
                         .requestMatchers("/internal/**").hasAnyRole("MASTER", "GRAND_EMPLOYEE")
                         .anyRequest().authenticated()
